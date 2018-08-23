@@ -12,7 +12,7 @@
 *.out
 
 # ide config file
-.idea/
+.idea
 
 # Mac custom attributes of folder
-.DS_Store 
+*.DS_Store
