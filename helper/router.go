@@ -71,13 +71,13 @@ func parseUrl(re *regexp.Regexp, url string) []UrlParams   {
 			ret[i].Name = names[i+1]
 			ret[i].Value = values[i+1]
 		}
-	}
-	else {
+	} else {
 		for i:=0; i<len(ret); i++ {
 			ret[i].Name = ""
 			ret[i].Value = values[i+1]
 		}
 	}
+	return ret
 }
 
 func (r *WebRouters) GetMatch(url string, method string) (f func(*Context),params []UrlParams) {
