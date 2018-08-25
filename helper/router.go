@@ -55,11 +55,40 @@ func (r *WebRouters) AddHandler(pattern string, method string, handler func(*Con
 }
 
 
-func (r *RouterEntry) Handle(handler interface{}) bool {
+func (r *WebRouters) Handle(handler interface{}) bool {
 	return true
 }
 
+func parseUrl(re *regexp.Regexp, url string) []UrlParams   {
+	values := re.FindStringSubmatch(url)
+	if len(values) <= 1 {
+		return []UrlParams{}
+	}
+	ret := make([]UrlParams, len(values)-1)
+	names := re.SubexpNames()
+	if len(names) == len(values) {
+		for i:=0; i<len(ret); i++ {
+			ret[i].Name = names[i+1]
+			ret[i].Value = values[i+1]
+		}
+	}
+	else {
+		for i:=0; i<len(ret); i++ {
+			ret[i].Name = ""
+			ret[i].Value = values[i+1]
+		}
+	}
+}
 
-func (r *RouterEntry) GetMatch(url string, method string) (f func(*Context),params []UrlParams) {
+func (r *WebRouters) GetMatch(url string, method string) (f func(*Context),params []UrlParams) {
+	var exist bool
+	for _, rou := range r.router {
+		if rou.reg.MatchString(url) {
+			if f, exist = rou.handler[strings.ToUpper(method)]; exist {
+				params = parseUrl(rou.reg, url)
+				return
+			}
+		}
+	}
 	return
 }
