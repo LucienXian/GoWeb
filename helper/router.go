@@ -5,12 +5,6 @@ import (
 	"strings"
 )
 
-type Router interface {
-	AddHandler(pattern string, method string, handler func(*Context) ) bool
-	Handle(handler interface{}) bool
-	GetMatch(url string, method string) (func(*Context), []UrlParams)
-}
-
 type RouterEntry struct {
 	pattern string
 	reg *regexp.Regexp

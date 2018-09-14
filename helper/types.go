@@ -22,6 +22,12 @@ type Context struct {
 	p []UrlParams
 }
 
+type Router interface {
+	AddHandler(pattern string, method string, handler func(*Context) ) bool
+	Handle(handler interface{}) bool
+	GetMatch(url string, method string) (func(*Context), []UrlParams)
+}
+
 type WebServer struct {
 	Route Router
 	P404 func(*Context)
