@@ -2,6 +2,7 @@ package helper
 
 import (
 	. "net/http"
+	"regexp"
 )
 
 type UrlParams struct {
@@ -31,6 +32,16 @@ type Router interface {
 type WebServer struct {
 	Route Router
 	P404 func(*Context)
+}
+
+type RouterEntry struct {
+	pattern string
+	reg *regexp.Regexp
+	handler map[string]func(*Context)
+}
+
+type WebRouters struct {
+	router []RouterEntry
 }
 
 

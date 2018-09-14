@@ -5,15 +5,7 @@ import (
 	"strings"
 )
 
-type RouterEntry struct {
-	pattern string
-	reg *regexp.Regexp
-	handler map[string]func(*Context)
-}
 
-type WebRouters struct {
-	router []RouterEntry
-}
 
 func (r *WebRouters) AddHandler(pattern string, method string, handler func(*Context) ) bool {
 	if len(pattern) < 1 {

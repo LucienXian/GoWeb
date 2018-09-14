@@ -1,8 +1,15 @@
 package helper
 
-import "testing"
+import (
+	"testing"
+	"fmt"
+)
 
 func TestAddHandler(t *testing.T)  {
-	// route := new(WebServer)
-	// route.Get()
+	s := new(WebServer)
+	route := new(Router)
+	s.Route = *route
+	s.Get("test", func(context *Context) {
+		fmt.Println("Get")
+	})
 }
