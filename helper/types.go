@@ -18,9 +18,9 @@ type PathConf struct {
 }
 
 type Context struct {
-	w ResponseWriter
-	r *Request
-	p []UrlParams
+	W ResponseWriter
+	R *Request
+	P []UrlParams
 }
 
 type Router interface {

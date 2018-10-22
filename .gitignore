@@ -16,3 +16,12 @@
 
 # Mac custom attributes of folder
 *.DS_Store
+
+# vscode debug file
+debug
+
+# binary file
+server
+
+# vscode config file
+.vscode
