@@ -1,10 +1,9 @@
-package main
+package tinyWeb
 
 import (
-	"fmt"
-	"net/http"
 	"tinyWeb/helper"
-	. "net/http"
+	"net/http"
+	"fmt"
 )
 
 type WebServe helper.WebServer
@@ -13,9 +12,16 @@ func (s *WebServe) init() {
 	
 }
 
-func (s *WebServe) ServeHTTP(w ResponseWriter, r *Request) {
-	fmt.Print("sss\n")
-	fmt.Println(s.Route)
+func NewServer() *helper.WebServer {
+	return &helper.WebServer{
+		Route: new(helper.WebRouters),
+		P404: func(c *helper.Context) {
+			c.WriteStr("404 Not Found")
+		},
+	}
+}
+
+func (s *WebServe) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	fun, para := s.Route.GetMatch(r.URL.Path, r.Method)
 	c := &helper.Context{W:w, R:r, P:para}
 	if fun != nil {
@@ -26,32 +32,32 @@ func (s *WebServe) ServeHTTP(w ResponseWriter, r *Request) {
 
 }
 
-
-func main() {
-	webRouters := new(helper.WebRouters)
-	res := webRouters.AddHandler("/test", "GET", func(*helper.Context){
-		fmt.Print("hello, world")
-	})
-	if res == false {
-		fmt.Printf("add handler error")
-		return
+func genContext(handler interface{}) func(*helper.Context) {
+	var s string
+	switch v := handler.(type) {
+	case string:
+		s = v
+	case func() string:
+		s = v()
+	default:
+		fmt.Println("unknown")
 	}
-	s := new(helper.WebServer)
-	s.Route = webRouters
-	s.P404 = func(c *helper.Context) {
-		c.W.Write([]byte("404 Not Foun"))
+	c := func(c *helper.Context) {
+		c.WriteStr(s)
 	}
-	http.HandleFunc("/test",
-		func(w http.ResponseWriter, r *http.Request) {
-			fun, para := s.Route.GetMatch(r.URL.Path, r.Method)
-			c := &helper.Context{W:w, R:r, P:para}
-			//fmt.Print(fun)
-			if fun == nil {
-				s.P404(c)
-			} else {
-				c.W.Write([]byte("hello"))
-				fun(c)
-			}
-		})
-	http.ListenAndServe(":12345", nil)
+	return c
 }
+
+func Get(route string, handler interface{}) {
+	c := genContext(handler)
+	mainServer.Get(route, c)
+	//mainServer.Handle(handler)
+}
+
+func Run(port string) {
+	mainServer.Run(port)
+}
+
+var mainServer = NewServer()
+
+
