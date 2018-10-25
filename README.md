@@ -13,14 +13,21 @@ package main
 
 import (
 	"tinyWeb"
+	"fmt"
 )
 
 func helloworld() string{
 	return "helloworld"
 }
 
+func helloworld_2(ctx *tinyWeb.Context) {
+	for k, v := range ctx.P {
+		fmt.Println(k, v)
+	}
+}
+
 func main() {
-	tinyWeb.Get("/test", helloworld)
+	tinyWeb.Get("/test", helloworld_2)
 	tinyWeb.Run(":12345")
 }
 ```
