@@ -1,10 +1,10 @@
-package helper
+package tinyWeb
 
 import (
 	"net/http"
 )
 
-func (s *WebServer) SetRouter(r Router){
+func (s *WebServer) SetRouter(r router){
 	s.Route = r
 }
 
@@ -25,7 +25,7 @@ func (s *WebServer) All(pattern string, entry func(*Context)) bool {
 func (s *WebServer) Run(addr string) {
 	http.HandleFunc("/",
 		func(w http.ResponseWriter, r *http.Request) {
-			fun, para := s.Route.GetMatch(r.URL.Path, r.Method)
+			fun, para := s.Route.GetMatch(r.URL.Path, r.Method, r.URL.Query())
 			c := &Context{W:w, R:r, P:para}
 			if fun == nil {
 				s.P404(c)
@@ -38,5 +38,14 @@ func (s *WebServer) Run(addr string) {
 
 func (s *WebServer) Handle(entries interface{})  {
 	s.Route.Handle(entries)
+}
+
+func newServer() *WebServer {
+	return &WebServer{
+		Route: new(webRouters),
+		P404: func(c *Context) {
+			c.WriteStr("404 Not Found")
+		},
+	}
 }
 

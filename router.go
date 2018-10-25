@@ -1,4 +1,4 @@
-package helper
+package tinyWeb
 
 import (
 	"regexp"
@@ -7,7 +7,7 @@ import (
 
 
 
-func (r *WebRouters) AddHandler(pattern string, method string, handler func(*Context) ) bool {
+func (r *webRouters) AddHandler(pattern string, method string, handler func(*Context) ) bool {
 	if len(pattern) < 1 {
 		return false
 	}
@@ -33,7 +33,7 @@ func (r *WebRouters) AddHandler(pattern string, method string, handler func(*Con
 	if err != nil {
 		return false
 	}
-	routerEntry := RouterEntry{pattern:pattern, reg:reg, handler:map[string]func(*Context){}}
+	routerEntry := routerEntry{pattern:pattern, reg:reg, handler:map[string]func(*Context){}}
 	routerEntry.handler[strings.ToUpper(method)] = handler
 	r.router = append(r.router, routerEntry)
 
@@ -41,37 +41,30 @@ func (r *WebRouters) AddHandler(pattern string, method string, handler func(*Con
 }
 
 
-func (r *WebRouters) Handle(handler interface{}) bool {
+func (r *webRouters) Handle(handler interface{}) bool {
 	return true
 }
 
-func parseUrl(re *regexp.Regexp, url string) []UrlParams   {
-	values := re.FindStringSubmatch(url)
-	if len(values) <= 1 {
-		return []UrlParams{}
+func parseUrl(params map[string][]string) []urlParams   {
+	if len(params) < 1 {
+		return []urlParams{}
 	}
-	ret := make([]UrlParams, len(values)-1)
-	names := re.SubexpNames()
-	if len(names) == len(values) {
-		for i:=0; i<len(ret); i++ {
-			ret[i].Name = names[i+1]
-			ret[i].Value = values[i+1]
-		}
-	} else {
-		for i:=0; i<len(ret); i++ {
-			ret[i].Name = ""
-			ret[i].Value = values[i+1]
-		}
+	ret := make([]urlParams, len(params))
+	i := 0
+	for k, v := range params {
+		ret[i].Name = k
+		ret[i].Value = v
+		i += 1
 	}
 	return ret
 }
 
-func (r *WebRouters) GetMatch(url string, method string) (f func(*Context),params []UrlParams) {
+func (r *webRouters) GetMatch(url string, method string, pars map[string][]string) (f func(*Context),params []urlParams) {
 	var exist bool
 	for _, rou := range r.router {
 		if rou.reg.MatchString(url) {
 			if f, exist = rou.handler[strings.ToUpper(method)]; exist {
-				params = parseUrl(rou.reg, url)
+				params = parseUrl(pars)
 				return
 			}
 		}
