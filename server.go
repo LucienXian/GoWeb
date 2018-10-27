@@ -2,8 +2,17 @@ package tinyWeb
 
 import (
 	"fmt"
+	"os"
+	"path"
 )
 
+var defaultStaticDirs []string
+
+func init() {
+	folderpath, _ := os.Getwd()
+	defaultStaticDirs = append(defaultStaticDirs, path.Join(folderpath, "static"))
+	return
+}
 
 func genContext(handler interface{}) func(*Context) {
 	var s string

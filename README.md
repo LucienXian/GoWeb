@@ -27,7 +27,8 @@ func helloworld_2(ctx *tinyWeb.Context) {
 }
 
 func main() {
-	tinyWeb.Get("/test", helloworld_2)
+	//tinyWeb.Get("/test", helloworld_2)
+	tinyWeb.Get("/(.+)", helloworld_2) //curl -i localhost:12345/index.html?a=1
 	tinyWeb.Run(":12345")
 }
 ```
