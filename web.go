@@ -42,10 +42,11 @@ func (s *WebServer) handle(r *http.Request, w http.ResponseWriter, c *Context, f
 	requestPath := r.URL.Path
 	if r.Method == "GET" {
 		if s.serveStaticFile(requestPath, r, w) {
-			c.setHeader("Content-Type", "text/html; charset=utf-8")
+			/*c.setHeader("Content-Type", "text/plain; charset=utf-8")
 			if fun != nil {
 				fun(c)
 			}
+			*/
 			return
 		}
 	}

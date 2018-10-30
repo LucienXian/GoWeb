@@ -16,6 +16,11 @@ import (
 	"fmt"
 )
 
+type Profile struct {
+	Name    string
+	Hobbies []string
+  }
+
 func helloworld() string{
 	return "helloworld"
 }
@@ -26,9 +31,18 @@ func helloworld_2(ctx *tinyWeb.Context) {
 	}
 }
 
+func helloworld_3(ctx *tinyWeb.Context) {
+	profile := Profile{"Alex", []string{"snowboarding", "programming"}}
+	ctx.WriteJson(profile)
+	//ctx.WriteXml(profile)
+}
+
+func helloworld_abort(ctx *tinyWeb.Context) {
+	ctx.WriteJson(make(chan int))
+}
+
 func main() {
-	//tinyWeb.Get("/test", helloworld_2)
-	tinyWeb.Get("/(.+)", helloworld_2) //curl -i localhost:12345/index.html?a=1
+	tinyWeb.Get("/(.+)", helloworld_abort)
 	tinyWeb.Run(":12345")
 }
 ```
