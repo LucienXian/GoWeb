@@ -35,7 +35,8 @@ func (s *WebServer) Run(addr string) {
 			requestPath := r.URL.Path
 			method := r.Method
 			Info.Println(fmt.Sprintf("tinyWeb handle the request path %s, method %s", requestPath, method))
-			fun, para := s.Route.GetMatch(requestPath, method, r.URL.Query())
+			r.ParseForm()
+			fun, para := s.Route.GetMatch(requestPath, method, r.Form)
 			c := &Context{W:w, R:r, P:para}
 			c.setHeader("Server", "tinyWeb")
 			c.setHeader("Date", time.Now().UTC().String())
@@ -48,7 +49,7 @@ func (s *WebServer) handle(r *http.Request, w http.ResponseWriter, c *Context, f
 	requestPath := r.URL.Path
 	if r.Method == "GET" {
 		if s.serveStaticFile(requestPath, r, w) {
-			/*c.setHeader("Content-Type", "text/plain; charset=utf-8")
+			/*c.setHeader("Content-Type", "text/plain; charse99t=utf-8")
 			if fun != nil {
 				fun(c)
 			}
