@@ -44,6 +44,7 @@ func Post(route string, handler interface{}) {
 }
 
 func Run(port string) {
+	Info.Println("tinyWeb run in the port: ", port)
 	mainServer.Run(port)
 }
 

@@ -4,6 +4,7 @@ import (
 	"os"
 	"time"
 	"path"
+	"fmt"
 	"net/http"
 )
 
@@ -12,15 +13,18 @@ func (s *WebServer) SetRouter(r router){
 }
 
 func (s *WebServer) Get(pattern string, entry func(*Context)) bool {
+	Info.Println("Add handler(get) ", pattern)
 	s.Route.AddHandler(pattern, "GET", entry)
 	return true
 }
 
 func (s *WebServer) Post(pattern string, entry func(*Context)) bool {
+	Info.Println("Add handler(post) ", pattern)
 	return s.Route.AddHandler(pattern, "POST", entry)
 }
 
 func (s *WebServer) All(pattern string, entry func(*Context)) bool {
+	Info.Println("Add handler(get & post) ", pattern)
 	return s.Route.AddHandler(pattern, "GET", entry) &&
 		s.Route.AddHandler(pattern, "POST", entry)
 }
@@ -29,7 +33,9 @@ func (s *WebServer) Run(addr string) {
 	http.HandleFunc("/",
 		func(w http.ResponseWriter, r *http.Request) {
 			requestPath := r.URL.Path
-			fun, para := s.Route.GetMatch(requestPath, r.Method, r.URL.Query())
+			method := r.Method
+			Info.Println(fmt.Sprintf("tinyWeb handle the request path %s, method %s", requestPath, method))
+			fun, para := s.Route.GetMatch(requestPath, method, r.URL.Query())
 			c := &Context{W:w, R:r, P:para}
 			c.setHeader("Server", "tinyWeb")
 			c.setHeader("Date", time.Now().UTC().String())
@@ -61,7 +67,7 @@ func (s *WebServer) serveStaticFile(name string, r *http.Request, w http.Respons
 		if _, err := os.Stat(staticFile); !os.IsNotExist(err) {
 			f, err := os.Open(staticFile)
 			if err != nil {
-				// handle error
+				Error.Println(fmt.Sprintf("Serve static file %s error ", staticFile))
 				return false
 			}
 			http.ServeContent(w, r, staticFile, time.Now(), f)

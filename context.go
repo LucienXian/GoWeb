@@ -13,6 +13,7 @@ func (c *Context) WriteStr(s string) {
 func (c *Context) WriteJson(v interface{}) {
 	js, err := json.Marshal(v)
 	if err != nil {
+		Error.Println("Json Marshal error")
 		c.Abort(500, "Server Error (json Marshal error)")
 		return
 	}
@@ -23,6 +24,7 @@ func (c *Context) WriteJson(v interface{}) {
 func (c *Context) WriteXml(v interface{}) {
 	x, err := xml.MarshalIndent(v, "", "  ")
 	if err != nil {
+		Error.Println("Xml Marshal error")
 		c.Abort(500, "Server Error (xml Marshal error)")
 		return
 	}

@@ -31,6 +31,7 @@ func (r *webRouters) AddHandler(pattern string, method string, handler func(*Con
 	}
 	reg, err := regexp.Compile(pattern)
 	if err != nil {
+		Error.Println("Regexp can not compile pattern ", pattern)
 		return false
 	}
 	routerEntry := routerEntry{pattern:pattern, reg:reg, handler:map[string]func(*Context){}}
